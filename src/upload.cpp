@@ -1,8 +1,10 @@
-#include <iostream>
-#include <cstdio>
-#include <netdb.h>
-#include <filesystem>
 #include <curl/curl.h>
+#include <netdb.h>
+
+#include <cstdio>
+#include <filesystem>
+#include <iostream>
+
 #include "config.hpp"
 #include "logger.hpp"
 
@@ -13,11 +15,11 @@ struct upload_info {
     size_t sizeLeft;
 };
 
-static size_t _uploadReadFunction(void *ptr, size_t size, size_t nmemb, void *data) {
-    auto *ui = (struct upload_info*)data;
+static size_t _uploadReadFunction(void *ptr, size_t size, size_t nmemb,
+                                  void *data) {
+    auto *ui = (struct upload_info *)data;
     size_t maxBytes = size * nmemb;
-    if (maxBytes < 1)
-        return 0;
+    if (maxBytes < 1) return 0;
 
     if (ui->sizeLeft) {
         size_t bytes = min(ui->sizeLeft, maxBytes);
@@ -36,7 +38,7 @@ bool sendFileToServer(string &path, size_t size) {
         Logger::get().info() << "Skipping upload for " << path << endl;
         return true;
     }
-    
+
     fs::path filePath = path;
     string contentType, copyName, telegramMethod;
     if (filePath.extension() == ".jpg") {
@@ -48,7 +50,9 @@ bool sendFileToServer(string &path, size_t size) {
         copyName = "video";
         telegramMethod = "sendVideo";
     } else {
-        Logger::get().error() << "Unknown file extension: " + filePath.extension().string() << endl;
+        Logger::get().error()
+            << "Unknown file extension: " + filePath.extension().string()
+            << endl;
         return false;
     }
 
@@ -59,24 +63,21 @@ bool sendFileToServer(string &path, size_t size) {
         return false;
     }
 
-    struct upload_info ui = { f, size };
+    struct upload_info ui = {f, size};
     struct curl_httppost *formpost = NULL;
     struct curl_httppost *lastptr = NULL;
 
-    curl_formadd(&formpost,
-                 &lastptr,
-                 CURLFORM_COPYNAME, copyName.c_str(),
-                 CURLFORM_FILENAME, filePath.c_str(),
-                 CURLFORM_STREAM, &ui,
-                 CURLFORM_CONTENTSLENGTH, size,
-                 CURLFORM_CONTENTTYPE, contentType.c_str(),
-                 CURLFORM_END);
+    curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, copyName.c_str(),
+                 CURLFORM_FILENAME, filePath.c_str(), CURLFORM_STREAM, &ui,
+                 CURLFORM_CONTENTSLENGTH, size, CURLFORM_CONTENTTYPE,
+                 contentType.c_str(), CURLFORM_END);
 
     CURL *curl = curl_easy_init();
     if (curl) {
-        const string url = "https://api.telegram.org/bot" + 
-            Config::get().getTelegramBotToken() + "/" + telegramMethod +
-            "?chat_id=" + Config::get().getTelegramChatId();
+        const string url = "https://api.telegram.org/bot" +
+                           Config::get().getTelegramBotToken() + "/" +
+                           telegramMethod +
+                           "?chat_id=" + Config::get().getTelegramChatId();
 
         Logger::get().debug() << "URL is " << url << endl;
 
@@ -95,17 +96,23 @@ bool sendFileToServer(string &path, size_t size) {
             double requestSize;
             curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
             curl_easy_getinfo(curl, CURLINFO_SIZE_UPLOAD, &requestSize);
-            Logger::get().debug() << requestSize << " bytes sent, response code: " << responseCode << endl;
+            Logger::get().debug()
+                << requestSize << " bytes sent, response code: " << responseCode
+                << endl;
             curl_easy_cleanup(curl);
             curl_formfree(formpost);
             if (responseCode == 200) {
-                 Logger::get().info() << "Successfully uploaded " << path << endl;
-                 return true;
+                Logger::get().info()
+                    << "Successfully uploaded " << path << endl;
+                return true;
             }
-            Logger::get().error() << "Error uploading, got response code " << responseCode << endl;
+            Logger::get().error() << "Error uploading, got response code "
+                                  << responseCode << endl;
             return false;
         } else {
-            Logger::get().error() << "curl_easy_perform() failed: " << curl_easy_strerror(res) << endl;
+            Logger::get().error()
+                << "curl_easy_perform() failed: " << curl_easy_strerror(res)
+                << endl;
             curl_easy_cleanup(curl);
             curl_formfree(formpost);
             return false;

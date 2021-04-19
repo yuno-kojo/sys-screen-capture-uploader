@@ -1,11 +1,10 @@
 #pragma once
 
-#include <iostream>
-#include <fstream>
 #include <ctime>
+#include <fstream>
+#include <iostream>
 
 using namespace std;
-
 
 enum LogLevel {
     DEBUG = 0,
@@ -17,8 +16,8 @@ enum LogLevel {
 const string LOGFILE_PATH = "sdmc:/config/sys-screen-capture-uploader/logs.txt";
 
 class Logger {
-public:
-    static Logger& get() {
+   public:
+    static Logger &get() {
         static Logger instance;
         return instance;
     }
@@ -29,9 +28,7 @@ public:
         close();
     }
 
-    void setLevel(LogLevel level) {
-        m_level = level;
-    }
+    void setLevel(LogLevel level) { m_level = level; }
 
     void open() {
         if (!m_file.is_open()) {
@@ -45,9 +42,7 @@ public:
         }
     }
 
-    bool isEnabled(LogLevel level) {
-        return level >= m_level;
-    }
+    bool isEnabled(LogLevel level) { return level >= m_level; }
 
     ostream &debug() {
         if (isEnabled(DEBUG)) {
@@ -85,7 +80,7 @@ public:
         return cout;
     }
 
-private:
+   private:
     static string get_time() {
         u64 now;
         timeGetCurrentTime(TimeType_LocalSystemClock, &now);
@@ -97,15 +92,19 @@ private:
 
     static string getPrefix(LogLevel lvl) {
         string prefix;
-        switch(lvl) {
+        switch (lvl) {
             case DEBUG:
-                prefix = "[DEBUG] "; break;
+                prefix = "[DEBUG] ";
+                break;
             case INFO:
-                prefix = "[INFO ] "; break;
+                prefix = "[INFO ] ";
+                break;
             case ERROR:
-                prefix = "[ERROR] "; break;
+                prefix = "[ERROR] ";
+                break;
             default:
-                prefix = "[     ] "; break;
+                prefix = "[     ] ";
+                break;
         }
         return prefix + "[" + get_time() + "] ";
     }

@@ -1,6 +1,8 @@
 #pragma once
 #include <switch.h>
+
 #include <string>
+
 #include "config.hpp"
 
 using namespace std;

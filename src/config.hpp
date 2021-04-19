@@ -1,13 +1,14 @@
 #pragma once
 
-#include <string>
 #include <switch.h>
+
 #include <map>
+#include <string>
 
 using namespace std;
 
 class Config {
-public:
+   public:
     static Config& get() {
         static Config instance;
         return instance;
@@ -17,12 +18,12 @@ public:
 
     string getTelegramBotToken();
     string getTelegramChatId();
-    bool uploadAllowed(string &tid, bool isMovie);
+    bool uploadAllowed(string& tid, bool isMovie);
     bool keepLogs();
 
     bool error;
 
-private:
+   private:
     string m_telegramBotToken;
     string m_telegramChatId;
     bool m_uploadScreenshots;
