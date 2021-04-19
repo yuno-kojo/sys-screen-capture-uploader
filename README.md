@@ -56,5 +56,4 @@ If you have an FTP server running on your Switch (such as [sys-ftpd-light](https
 
 - [bakatrouble/sys-screenuploader](https://github.com/bakatrouble/sys-screenuploader): project from which this project was forked;
 - [vbe0201/libnx-template](https://github.com/vbe0201/libnx-template/): homebrew template project;
-- [SunTheCourier/SwitchPresence-Rewritten](https://github.com/SunTheCourier/SwitchPresence-Rewritten): initial sysmodule code;
-- [lordelan](https://github.com/lordelan): icon.
+- [SunTheCourier/SwitchPresence-Rewritten](https://github.com/SunTheCourier/SwitchPresence-Rewritten): initial sysmodule code.

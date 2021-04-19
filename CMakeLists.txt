@@ -41,7 +41,6 @@ set(HOMEBREW_APP "sys-screen-capture-uploader")
 # Meta information about the app
 set(APP_TITLE ${HOMEBREW_APP})
 set(APP_AUTHOR "musse")
-# set(APP_ICON "assets/icon.png")
 
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 0)
