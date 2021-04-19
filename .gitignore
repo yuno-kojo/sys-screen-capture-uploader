@@ -89,3 +89,5 @@ _build/
 .idea/
 
 release
+*.envrc
+*.DS_Store
