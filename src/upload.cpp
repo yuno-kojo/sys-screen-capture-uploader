@@ -91,7 +91,12 @@ bool sendFileToServer(string &path, size_t size) {
             Logger::get().debug() << requestSize << " bytes sent, response code: " << responseCode << endl;
             curl_easy_cleanup(curl);
             curl_formfree(formpost);
-            return responseCode == 200;
+            if (responseCode == 200) {
+                 Logger::get().info() << "Successfully uploaded " << path << endl;
+                 return true;
+            }
+            Logger::get().error() << "Error uploading, got response code " << responseCode << endl;
+            return false;
         } else {
             Logger::get().error() << "curl_easy_perform() failed: " << curl_easy_strerror(res) << endl;
             curl_easy_cleanup(curl);
