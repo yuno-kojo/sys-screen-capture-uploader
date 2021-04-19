@@ -5,7 +5,7 @@
 # libnx CMake template for Nintendo Switch homebrew development.
 
 cmake_minimum_required(VERSION 3.8)
-project(screenuploader)
+project(sys-screen-capture-uploader)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(options)
@@ -36,7 +36,7 @@ include_directories(${PROJECT_BINARY_DIR})
 include_directories(${PORTLIBS}/include)
 
 # Replace this with the name of your application
-set(HOMEBREW_APP "screenuploader")
+set(HOMEBREW_APP "sys-screen-capture-uploader")
 
 # Meta information about the app
 set(APP_TITLE ${HOMEBREW_APP})

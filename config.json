@@ -1,8 +1,8 @@
 {
-	"name":	"sys-screenuploader",
-	"title_id":	"0x42000062616B6101",
-	"title_id_range_min":	"0x42000062616B6101",
-	"title_id_range_max":	"0x42000062616B6101",
+	"name":	"sys-screen-capture-uploader",
+	"title_id":	"0x0100000000000333",
+	"title_id_range_min":	"0x0100000000000333",
+	"title_id_range_max":	"0x0100000000000333",
 	"main_thread_stack_size":	"0x50000",
 	"main_thread_priority":	44,
 	"default_cpu_id":	3,

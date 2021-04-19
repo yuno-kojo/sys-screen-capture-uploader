@@ -118,14 +118,14 @@ void initLogger(bool truncate) {
     Logger::get().none() << "=============================" << endl;
     Logger::get().none() << "=============================" << endl;
     Logger::get().none() << "=============================" << endl;
-    Logger::get().none() << "ScreenUploader v" << APP_VERSION << " is starting..." << endl;
+    Logger::get().none() << "sys-screen-capture-uploader v" << APP_VERSION << " is starting..." << endl;
 }
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 int main(int argc, char **argv) {
     mkdir("sdmc:/config", 0700);
-    mkdir("sdmc:/config/sys-screenuploader", 0700);
+    mkdir("sdmc:/config/sys-screen-capture-uploader", 0700);
 
     initLogger(false);
     Config::get().refresh();

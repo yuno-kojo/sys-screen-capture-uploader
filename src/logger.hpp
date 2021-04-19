@@ -14,7 +14,7 @@ enum LogLevel {
     NONE = 10,
 };
 
-const string LOGFILE_PATH = "sdmc:/config/sys-screenuploader/screenuploader.log";
+const string LOGFILE_PATH = "sdmc:/config/sys-screen-capture-uploader/logs.txt";
 
 class Logger {
 public:

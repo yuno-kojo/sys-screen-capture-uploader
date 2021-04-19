@@ -8,7 +8,7 @@
 using namespace std;
 
 bool Config::refresh() {
-    INIReader reader("sdmc:/config/sys-screenuploader/config.ini");
+    INIReader reader("sdmc:/config/sys-screen-capture-uploader/config.ini");
 
     if (reader.ParseError() != 0) {
         Logger::get().error() << "Config parse error " << reader.ParseError() << endl;
