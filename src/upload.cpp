@@ -30,24 +30,22 @@ static size_t _uploadReadFunction(void *ptr, size_t size, size_t nmemb, void *da
 }
 
 bool sendFileToServer(string &path, size_t size) {
+    fs::path filePath = path;
     string contentType, copyName, telegramMethod;
-    string fileExtension = path.substr(path.find_last_of(".") + 1);
-    if (fileExtension == "jpg") {
+    if (filePath.extension() == ".jpg") {
         contentType = "image/jpeg";
         copyName = "photo";
         telegramMethod = "sendPhoto";
-    } else if (fileExtension == "mp4") {
+    } else if (filePath.extension() == ".mp4") {
         contentType = "video/mp4";
         copyName = "video";
         telegramMethod = "sendVideo";
     } else {
-        Logger::get().error() << "Unknown file extension: " + fileExtension << endl;
+        Logger::get().error() << "Unknown file extension: " + filePath.extension().string() << endl;
         return false;
     }
 
-    fs::path fpath(path);
-
-    FILE *f = fopen(path.c_str(), "rb");
+    FILE *f = fopen(filePath.c_str(), "rb");
 
     if (f == nullptr) {
         Logger::get().error() << "fopen() failed" << endl;
@@ -61,7 +59,7 @@ bool sendFileToServer(string &path, size_t size) {
     curl_formadd(&formpost,
                  &lastptr,
                  CURLFORM_COPYNAME, copyName.c_str(),
-                 CURLFORM_FILENAME, path.c_str(),
+                 CURLFORM_FILENAME, filePath.c_str(),
                  CURLFORM_STREAM, &ui,
                  CURLFORM_CONTENTSLENGTH, size,
                  CURLFORM_CONTENTTYPE, contentType.c_str(),
