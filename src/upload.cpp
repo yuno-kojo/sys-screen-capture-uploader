@@ -30,11 +30,19 @@ static size_t _uploadReadFunction(void *ptr, size_t size, size_t nmemb, void *da
 }
 
 bool sendFileToServer(string &path, size_t size) {
-    string tid = path.substr(path.length() - 36, 32);
-    Logger::get().debug() << "Title ID: " << tid << endl;
-    if (!Config::get().uploadAllowed(tid, path.back() == '4')) {
-        Logger::get().info() << "Not uploading" << endl;
-        return true;
+    string contentType, copyName, telegramMethod;
+    string fileExtension = path.substr(path.find_last_of(".") + 1);
+    if (fileExtension == "jpg") {
+        contentType = "image/jpeg";
+        copyName = "photo";
+        telegramMethod = "sendPhoto";
+    } else if (fileExtension == "mp4") {
+        contentType = "video/mp4";
+        copyName = "video";
+        telegramMethod = "sendVideo";
+    } else {
+        Logger::get().error() << "Unknown file extension: " + fileExtension << endl;
+        return false;
     }
 
     fs::path fpath(path);
@@ -47,25 +55,31 @@ bool sendFileToServer(string &path, size_t size) {
     }
 
     struct upload_info ui = { f, size };
+    struct curl_httppost *formpost = NULL;
+    struct curl_httppost *lastptr = NULL;
+
+    curl_formadd(&formpost,
+                 &lastptr,
+                 CURLFORM_COPYNAME, copyName.c_str(),
+                 CURLFORM_FILENAME, path.c_str(),
+                 CURLFORM_STREAM, &ui,
+                 CURLFORM_CONTENTSLENGTH, size,
+                 CURLFORM_CONTENTTYPE, contentType.c_str(),
+                 CURLFORM_END);
 
     CURL *curl = curl_easy_init();
     if (curl) {
-        stringstream url;
-        url << Config::get().getUrl(tid) << "?filename=" << fpath.filename().string() << Config::get().getUrlParams() ;
-        Logger::get().debug() << "Upload URL: " << url.str() << endl;
-        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        const string url = "https://api.telegram.org/bot" + 
+            Config::get().getTelegramBotToken() + "/" + telegramMethod +
+            "?chat_id=" + Config::get().getTelegramChatId();
+
+        Logger::get().debug() << "URL is " << url << endl;
+
         curl_easy_setopt(curl, CURLOPT_POST, 1L);
-        struct curl_slist *chunk = nullptr;
-        chunk = curl_slist_append(chunk, "Accept: application/json");
-        chunk = curl_slist_append(chunk, "Content-Type: application/octet-stream");
-        chunk = curl_slist_append(chunk, "Content-Transfer-Encoding: binary");
-        chunk = curl_slist_append(chunk, "Connection: close");
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (curl_off_t)size);
-        curl_easy_setopt(curl, CURLOPT_READDATA, &ui);
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_READFUNCTION, _uploadReadFunction);
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
         curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, 0x2000L);
         curl_easy_setopt(curl, CURLOPT_UPLOAD_BUFFERSIZE, 0x2000L);
         CURLcode res = curl_easy_perform(curl);
@@ -77,16 +91,17 @@ bool sendFileToServer(string &path, size_t size) {
             curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
             curl_easy_getinfo(curl, CURLINFO_SIZE_UPLOAD, &requestSize);
             Logger::get().debug() << requestSize << " bytes sent, response code: " << responseCode << endl;
-            curl_slist_free_all(chunk);
             curl_easy_cleanup(curl);
+            curl_formfree(formpost);
             return responseCode == 200;
         } else {
             Logger::get().error() << "curl_easy_perform() failed: " << curl_easy_strerror(res) << endl;
-            curl_slist_free_all(chunk);
             curl_easy_cleanup(curl);
+            curl_formfree(formpost);
             return false;
         }
     }
+
     Logger::get().error() << "curl_easy_init() failed" << endl;
     return false;
 }

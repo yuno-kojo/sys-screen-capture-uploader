@@ -2,6 +2,7 @@
 #include <switch.h>
 #include <dirent.h>
 #include <iostream>
+#include <curl/curl.h>
 #include "upload.hpp"
 #include "utils.hpp"
 #include "config.hpp"
@@ -133,6 +134,8 @@ int main(int argc, char **argv) {
 
     if (!Config::get().keepLogs())
         initLogger(true);
+
+    curl_global_init(CURL_GLOBAL_ALL);
 
     Result rc;
     CapsAlbumStorage storage;
