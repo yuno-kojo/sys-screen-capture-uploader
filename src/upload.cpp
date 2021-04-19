@@ -30,6 +30,13 @@ static size_t _uploadReadFunction(void *ptr, size_t size, size_t nmemb, void *da
 }
 
 bool sendFileToServer(string &path, size_t size) {
+    string tid = path.substr(path.length() - 36, 32);
+    Logger::get().debug() << "Title ID: " << tid << endl;
+    if (!Config::get().uploadAllowed(tid, path.back() == '4')) {
+        Logger::get().info() << "Skipping upload for " << path << endl;
+        return true;
+    }
+    
     fs::path filePath = path;
     string contentType, copyName, telegramMethod;
     if (filePath.extension() == ".jpg") {
