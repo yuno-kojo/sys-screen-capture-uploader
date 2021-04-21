@@ -43,7 +43,7 @@ Check the following links for additional details on how to set up your environme
 To build the project, you also need [`CMake`](https://cmake.org/). Create a `build` directory on the project root, `cd` into it and run:
 
 ```
-cmake .. -DCMAKE_TOOLCHAIN_FILE=../devkita64-libnx.cmake
+cmake .. -DCMAKE_TOOLCHAIN_FILE=../devkita64-libnx.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 ```
 
 You should now have a `Makefile` inside the `build` directory and can simply run `make` to build the project. The relevant binary file is `sys-screen-capture-uploader.nsp`.

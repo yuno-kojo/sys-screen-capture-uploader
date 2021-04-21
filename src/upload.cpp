@@ -19,7 +19,9 @@ static size_t _uploadReadFunction(void *ptr, size_t size, size_t nmemb,
                                   void *data) {
     auto *ui = (struct upload_info *)data;
     size_t maxBytes = size * nmemb;
-    if (maxBytes < 1) return 0;
+    if (maxBytes < 1) {
+        return 0;
+    }
 
     if (ui->sizeLeft) {
         size_t bytes = min(ui->sizeLeft, maxBytes);

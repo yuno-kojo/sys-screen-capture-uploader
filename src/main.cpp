@@ -44,23 +44,30 @@ void __libnx_initheap(void) {
 void __appInit(void) {
     Result rc;
     rc = smInitialize();
-    if (R_FAILED(rc)) fatalThrow(rc);
+    if (R_FAILED(rc)) {
+        fatalThrow(rc);
+    }
     rc = setsysInitialize();
     if (R_SUCCEEDED(rc)) {
         SetSysFirmwareVersion fw;
         rc = setsysGetFirmwareVersion(&fw);
-        if (R_SUCCEEDED(rc))
+        if (R_SUCCEEDED(rc)) {
             hosversionSet(MAKEHOSVERSION(fw.major, fw.minor, fw.micro));
-        else
+        } else {
             fatalThrow(rc);
+        }
         setsysExit();
-    } else
+    } else {
         fatalThrow(rc);
+    }
     rc = pmdmntInitialize();
-    if (R_FAILED(rc)) fatalThrow(rc);
+    if (R_FAILED(rc)) {
+        fatalThrow(rc);
+    }
     rc = nsInitialize();
-    if (R_FAILED(rc)) fatalThrow(rc);
-
+    if (R_FAILED(rc)) {
+        fatalThrow(rc);
+    }
     SocketInitConfig sockConf = {
         .bsdsockets_version = 1,
 
@@ -75,18 +82,29 @@ void __appInit(void) {
         .sb_efficiency = 4,
     };
     rc = socketInitialize(&sockConf);
-    if (R_FAILED(rc)) fatalThrow(rc);
+    if (R_FAILED(rc)) {
+        fatalThrow(rc);
+    }
+
     rc = pminfoInitialize();
-    if (R_FAILED(rc)) fatalThrow(rc);
+    if (R_FAILED(rc)) {
+        fatalThrow(rc);
+    }
 
     rc = capsaInitialize();
-    if (R_FAILED(rc)) fatalThrow(rc);
+    if (R_FAILED(rc)) {
+        fatalThrow(rc);
+    }
 
     rc = fsInitialize();
-    if (R_FAILED(rc)) fatalThrow(rc);
+    if (R_FAILED(rc)) {
+        fatalThrow(rc);
+    }
 
     rc = timeInitialize();
-    if (R_FAILED(rc)) fatalThrow(rc);
+    if (R_FAILED(rc)) {
+        fatalThrow(rc);
+    }
 
     fsdevMountSdmc();
 }
@@ -105,7 +123,9 @@ void __appExit(void) {
 }
 
 void initLogger(bool truncate) {
-    if (truncate) Logger::get().get().truncate();
+    if (truncate) {
+        Logger::get().get().truncate();
+    }
 
     Logger::get().none() << "=============================" << endl;
     Logger::get().none() << "=============================" << endl;
@@ -114,17 +134,19 @@ void initLogger(bool truncate) {
                          << " is starting..." << endl;
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
 int main(int argc, char **argv) {
     mkdir("sdmc:/config", 0700);
     mkdir("sdmc:/config/sys-screen-capture-uploader", 0700);
 
     initLogger(false);
     Config::get().refresh();
-    if (Config::get().error) return 0;
+    if (Config::get().error) {
+        return 0;
+    }
 
-    if (!Config::get().keepLogs()) initLogger(true);
+    if (!Config::get().keepLogs()) {
+        initLogger(true);
+    }
 
     curl_global_init(CURL_GLOBAL_ALL);
 
@@ -169,12 +191,15 @@ int main(int argc, char **argv) {
                 bool sent = false;
                 for (int i = 0; i < 3; i++) {
                     sent = sendFileToServer(tmpItem, fs);
-                    if (sent) break;
+                    if (sent) {
+                        break;
+                    }
                 }
                 lastItem = tmpItem;
-                if (!sent)
+                if (!sent) {
                     Logger::get().error()
                         << "Unable to send file after 3 retries" << endl;
+                }
             }
 
             Logger::get().close();
@@ -183,4 +208,3 @@ int main(int argc, char **argv) {
         svcSleepThread(1e+9);
     }
 }
-#pragma clang diagnostic pop

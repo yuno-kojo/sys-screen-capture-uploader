@@ -1,5 +1,6 @@
 {
     "cmake.configureSettings": {
         "CMAKE_TOOLCHAIN_FILE": "devkita64-libnx.cmake"
-    }
+    },
+    "clang-tidy.buildPath": "build"
 }
