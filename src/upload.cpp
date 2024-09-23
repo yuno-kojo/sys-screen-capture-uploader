@@ -46,11 +46,11 @@ bool sendFileToServer(string &path, size_t size) {
     if (filePath.extension() == ".jpg") {
         contentType = "image/jpeg";
         copyName = "photo";
-        telegramMethod = "sendPhoto";
+        telegramMethod = "sendDocument";
     } else if (filePath.extension() == ".mp4") {
         contentType = "video/mp4";
         copyName = "video";
-        telegramMethod = "sendVideo";
+        telegramMethod = "sendDocument";
     } else {
         Logger::get().error()
             << "Unknown file extension: " + filePath.extension().string()
