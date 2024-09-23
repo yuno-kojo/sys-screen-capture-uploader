@@ -187,10 +187,12 @@ int main(int argc, char **argv) {
                 Logger::get().info() << "New item found: " << tmpItem << endl;
                 Logger::get().info() << "Filesize: " << fs << endl;
                 bool sent = false;
-                for (int i = 0; i < 3; i++) {
-                    sent = sendFileToServer(tmpItem, fs);
-                    if (sent) {
-                        break;
+                for (bool compression : {true, false}) {                                        
+                    for (int i = 0; i < 3; i++) {                    
+                      sent = sendFileToServer(tmpItem, fs, compression);
+                      if (sent) {
+                          break;
+                      }
                     }
                 }
                 lastItem = tmpItem;

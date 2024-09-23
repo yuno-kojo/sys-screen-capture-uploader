@@ -7,4 +7,4 @@
 
 using namespace std;
 
-bool sendFileToServer(string &path, size_t size);
+bool sendFileToServer(string &path, size_t size, bool compression);

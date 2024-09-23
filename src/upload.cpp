@@ -33,7 +33,7 @@ static size_t _uploadReadFunction(void *ptr, size_t size, size_t nmemb,
     return 0;
 }
 
-bool sendFileToServer(string &path, size_t size) {
+bool sendFileToServer(string &path, size_t size, bool compression) {
     string tid = path.substr(path.length() - 36, 32);
     Logger::get().debug() << "Title ID: " << tid << endl;
     if (!Config::get().uploadAllowed(tid, path.back() == '4')) {
@@ -45,12 +45,12 @@ bool sendFileToServer(string &path, size_t size) {
     string contentType, copyName, telegramMethod;
     if (filePath.extension() == ".jpg") {
         contentType = "image/jpeg";
-        copyName = "photo";
-        telegramMethod = "sendDocument";
+        copyName = compression ? "document" : "photo";
+        telegramMethod = compression ? "sendDocument" : "sendPhoto";
     } else if (filePath.extension() == ".mp4") {
         contentType = "video/mp4";
-        copyName = "video";
-        telegramMethod = "sendDocument";
+        copyName = compression ? "document" : "video";
+        telegramMethod = compression ? "sendDocument" : "sendVideo";
     } else {
         Logger::get().error()
             << "Unknown file extension: " + filePath.extension().string()
